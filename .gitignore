@@ -1,0 +1,19 @@
+# Dependency directory
+node_modules
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Ignore built ts files
+dist/**/*
+
+# ignore yarn
+yarn.lock
+yarn-error.log
+
+# API keys and secrets
+.env
+
+# Coverage reports
+coverage
