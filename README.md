@@ -12,7 +12,8 @@ A naive blockchain implementation in javascript
 
 # Considered features
 - Check if a client has enough coins to spend
-- Actual p2p connection between clients, currently clients mine on the main server and have to communicate with that server to perform transactions 
+- Actual p2p connection between clients, currently clients mine on the main server and have to communicate with that server to perform transactions
+- Adding more integration tests to test the websocket implementation
 
 ## Properties of a proof-of-work blockchain
 - The problem must be hard to solve and easy to verify
@@ -49,3 +50,9 @@ yarn start
 ```sh
 yarn test
 ```
+
+# Communicating with the server
+
+I used Postman to connect to the server via websocket, send and receive messages
+
+![Postman](https://user-images.githubusercontent.com/107947310/178341365-1bbb1004-7b77-4536-bad1-651046460694.png)
