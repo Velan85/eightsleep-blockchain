@@ -57,8 +57,8 @@ I used Postman to connect to the server via websocket, send and receive messages
 ![Postman](https://user-images.githubusercontent.com/107947310/178341365-1bbb1004-7b77-4536-bad1-651046460694.png)
 
 ## List of commands
-Create a wallet for a connected client `{ "type": "CREATE_WALLET" }`
-Send coins to another client `{ "type": "SEND_COINS", "sender": "41e2b800-3be6-4f11-8af5-d73610f3344b", "recipient": "611a3beb-4f7a-40a2-a79b-289e469ede12", "amount": 100 }`
-Check the user's balance `{ "type": "GET_BALANCE", "wallet": "611a3beb-4f7a-40a2-a79b-289e469ede12" }`
-Retrieve the whole blockchain `{ "type": "GET_BLOCKCHAIN" }`
+- Create a wallet for a connected client `{ "type": "CREATE_WALLET" }`
+- Send coins to another client `{ "type": "SEND_COINS", "sender": "41e2b800-3be6-4f11-8af5-d73610f3344b", "recipient": "611a3beb-4f7a-40a2-a79b-289e469ede12", "amount": 100 }`
+- Check the user's balance `{ "type": "GET_BALANCE", "wallet": "611a3beb-4f7a-40a2-a79b-289e469ede12" }`
+- Retrieve the whole blockchain `{ "type": "GET_BLOCKCHAIN" }`
 
