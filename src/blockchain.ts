@@ -1,6 +1,5 @@
 
-import generateBlock, { genesisBlock, verifyBlock, adjustDifficulty } from './block'
-import { clearCurrentTransactions } from './transactions'
+import { genesisBlock, verifyBlock, adjustDifficulty } from './block'
 import type { Block } from './types/Block'
 
 // A miner gets 100 coins when it successfully mines a block
@@ -14,7 +13,6 @@ let chain: Block[] = [
 export const addBlock = (block: Block) => {
   chain = [...chain, block]
 
-  // clearCurrentTransactions()
   adjustDifficulty(chain[chain.length - 1])
 }
 
@@ -23,7 +21,7 @@ export const addBlock = (block: Block) => {
   If they don't match, the blockchain is invalid or has been tempered with
   The genesis block is exluded as there is no previous block
 */
-const blockchainIsValid = (): boolean => {
+export const blockchainIsValid = (): boolean => {
   for(let i = 1; i < chain.length; i++) {
     const block = chain[i]
     const previousBlock = chain[i - 1]

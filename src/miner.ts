@@ -10,7 +10,7 @@ export default (): Block => {
   const timestamp = Date.now().toString()
   const transactions = getPendingTransactions()
 
-  console.log('Transactions', transactions)
+  // console.log('Transactions', transactions)
 
   // // Block is generated so we clear pending transactions
   // // New transactions, while the block is mined are deffered to the next block

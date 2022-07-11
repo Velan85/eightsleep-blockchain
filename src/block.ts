@@ -1,5 +1,4 @@
 import { createHash } from 'crypto'
-// import url from 'url'
 
 import type { Block, BlockParams, MineParams, MineOutput } from './types/Block'
 

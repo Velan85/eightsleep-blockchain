@@ -1,16 +1,18 @@
 
 # Description
+A naive blockchain implementation in javascript
 
 # Features
 - Simple blockchain
-  - 
 - Clients communicating with the blockchain
 - Clients communicating with each other (transferring coins)
 - Clients can drop or join
+- Awarding coins to a random connected client one a block is mined
+- Adjustable difficulty depending on the time it took to mine the previous block compared to the expected time
 
 # Considered features
-- Adjustable difficulty depending on the number of clients
 - Check if a client has enough coins to spend
+- Actual p2p connection between clients, currently clients mine on the main server and have to communicate with that server to perform transactions 
 
 ## Properties of a proof-of-work blockchain
 - The problem must be hard to solve and easy to verify
@@ -21,13 +23,14 @@
   - The hash of the previous block
   - The timestamp
   - The data in the block
+  - The nonce value, which is a number generated iteratively to modify the resulting hash
 - To validate the block we need to find a number, add it to the block and hash the block with SHA256.
 - The resulting hash needs to start with a certain amount of `0`s.
 ```js
   SHA256(prevHash + timestamp + JSON.stringify(data) + nonce)
 ```
 
-This makes it possible to make sure that a block is created periodically, for instance the bitcoin blockchain aims to create a block every 10mns.
+This makes it possible to make sure that a block is created periodically, for instance the bitcoin blockchain aims to create a block every 10 minutes.
 
 If the processing power increases or decreases, the difficulty can be adjusted to generate a hash with more or less 0s, making sure that a block is still generated in about the same time.
 

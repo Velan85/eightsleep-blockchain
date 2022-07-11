@@ -7,7 +7,7 @@ export const createTransaction = ({
   sender,
   amount,
   recipient
-}: Transaction) => {
+}: Transaction): void => {
   pendingTransactions = [...pendingTransactions, {
     sender,
     amount,

@@ -106,5 +106,9 @@ const miningProcess = () => {
 }
 
 // Delaying the mining process so clients can connect
-// The
+
+console.log(process.env)
+
 miningProcess()
+
+export default server
