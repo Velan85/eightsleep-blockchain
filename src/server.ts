@@ -1,66 +1,110 @@
-import express from 'express'
-import { v4 } from 'uuid'
-import { getBlockchain, getAmountPerClient } from './blockchain'
+import WebSocket, { WebSocketServer } from 'ws'
 import { createTransaction } from './transactions'
+import { getBlockchain, getAmountPerClient, addBlock } from './blockchain'
+import miner from './miner'
+import { v4 } from 'uuid'
 
-import type { TransactionQuery } from 'Transaction'
+import type { Message, SendCoins, CreateWallet } from './types/Server'
+import * as dotenv from 'dotenv'
 
-const PORT = 3000
+dotenv.config()
 
-const app = express()
+const port = parseInt(process.env.PORT)
+const reward = parseInt(process.env.REWARD)
 
-app.get('/', (_, res) => {
-  res.send(`Server is running on port ${PORT}`)
-})
+const wss = new WebSocketServer({ port })
 
-/* Create a new transaction */
-app.post('/transactions', ({ query }: TransactionQuery, res) => {
-  // Sender is undefined, empty or null
-  if (!query.sender) {
-    res
-      .send('Missing sender')
-      .status(400)
-  }
+let clients: { [id: string]: WebSocket }[] = []
 
-  // Recipient is undefined, empty or null
-  if (!query.recipient) {
-    res
-      .send('Missing recipient')
-      .status(400)
-  }
-  
-  // Recipient is undefined, 0 or null
-  if (!query.amount) {
-    res
-      .send('Missing amount')
-      .status(400)
-  }
+console.log(`WebSocket server is up on port ${port}`)
 
-  createTransaction(query)
-  res.send('Transaction created')
-})
+const createWallet: CreateWallet = () => {
+  return { wallet: v4() }
+}
 
-/* An client connects to the blockchain and creates its wallet */
-app.post('/wallet', (_, res) => {
-  res.send(JSON.stringify({
-    wallet: v4()
-  }))
-})
+const server = wss.on('connection', async (socket) => {
+  socket.send(JSON.stringify(getBlockchain()))
 
-app.get('/wallet/:id', ({ query }: { query: { wallet: string } }, res) => {
-  res.send({
-    wallet: query.wallet,
-    amount: getAmountPerClient(query.wallet)
+  socket.on('message', (message: string) => {
+    const parsedMessage: Message = JSON.parse(message)
+
+    switch(parsedMessage.type) {
+      case 'CREATE_WALLET':
+        const wallet = createWallet()
+        clients = [...clients, { [wallet.wallet]: socket }]
+        socket.send(
+          JSON.stringify(wallet)
+        )
+        break
+      case 'SEND_COINS':
+        createTransaction(parsedMessage)
+        socket.send(
+          JSON.stringify('Transaction Created')
+        )
+        break
+      case 'GET_BALANCE':
+        socket.send(
+          JSON.stringify(
+            { balance: getAmountPerClient(parsedMessage.wallet) }
+          )
+        )
+        break
+      case 'GET_BLOCKCHAIN':
+        socket.send(
+          JSON.stringify(getBlockchain())
+        )
+        break
+    }
   })
 })
 
-/* Get the full blockchain */
-app.get('/blockchain', (_, res) => {
-  res.send(JSON.stringify(getBlockchain()))
-})
+const getRandomClient = () => {
+  console.log(clients)
+  return clients[Math.floor((Math.random() * clients.length))]
+}
 
-app.listen(PORT, () => {
-  console.log(`Server is running locally`)
-})
+// Start mining
+const miningProcess = () => {
+  const block = miner()
+  const rewardClient = getRandomClient() // get a random client
 
-export default app
+  console.log('New block', block)
+
+  if(rewardClient) {
+    console.log('New reward', {
+      sender: '',
+      amount: reward,
+      recipient: Object.keys(rewardClient)[0]
+    })
+
+    // Award coins for mining the block to a random connected client
+    createTransaction({
+      sender: '',
+      amount: reward,
+      recipient: Object.keys(rewardClient)[0]
+    })
+
+    Object.values(rewardClient)[0].emit(
+      JSON.stringify(
+        { balance: getAmountPerClient(Object.keys(rewardClient)[0]) }
+      )
+    )
+  }
+  else {
+    console.log('No client found')
+    // We're still creating a transaction, but without any client
+    createTransaction({
+      sender: '',
+      amount: reward,
+      recipient: ''
+    })
+  }
+  addBlock(block)
+
+  // Recursively call the process again
+  setTimeout(() => { miningProcess() }, 1000)
+}
+
+// Delaying the mining process so clients can connect
+// The
+miningProcess()

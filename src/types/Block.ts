@@ -1,4 +1,4 @@
-import type { Transaction } from 'Transaction'
+import type { Transaction } from './Transaction'
 
 export type Block = {
   timestamp: string
@@ -13,4 +13,15 @@ export type BlockParams = {
   transactions?: Transaction[]
   prevHash?: string
   nonce?: number
+}
+
+export type MineParams = {
+  timestamp: string
+  transactions: Transaction[]
+  prevHash: string
+}
+
+export type MineOutput = {
+  nonce: number
+  hash: string
 }

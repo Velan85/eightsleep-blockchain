@@ -13,6 +13,8 @@ export const createTransaction = ({
     amount,
     recipient
   }]
+
+  console.log(pendingTransactions)
 }
 
 /* Get pending transactions */

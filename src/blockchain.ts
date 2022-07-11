@@ -1,6 +1,6 @@
 
 import generateBlock, { genesisBlock, verifyBlock, adjustDifficulty } from './block'
-import { clearCurrentTransactions, getPendingTransactions } from './transactions'
+import { clearCurrentTransactions } from './transactions'
 import type { Block } from './types/Block'
 
 // A miner gets 100 coins when it successfully mines a block
@@ -11,16 +11,10 @@ let chain: Block[] = [
   genesisBlock()
 ]
 
-const addBlock = () => {
-  const newBlock = generateBlock({
-    timestamp: Date.now().toString(),
-    transactions: getPendingTransactions(),
-    prevHash: chain[chain.length - 1].hash,
-    nonce: 0
-  })
-  chain = [...chain, newBlock]
+export const addBlock = (block: Block) => {
+  chain = [...chain, block]
 
-  clearCurrentTransactions()
+  // clearCurrentTransactions()
   adjustDifficulty(chain[chain.length - 1])
 }
 
@@ -56,6 +50,10 @@ export const getAmountPerClient = (client: string): number => {
       return blockAmount
     }, amount)
   }, 0)
+}
+
+export const getLastBlock = (): Block => {
+  return chain[chain.length - 1]
 }
 
 export const getBlockchain = (): Block[] => chain
